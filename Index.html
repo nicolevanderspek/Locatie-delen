@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Locatie delen</title>
+  <style>
+    body {
+      font-family: system-ui, Arial, sans-serif;
+      padding: 24px;
+      max-width: 700px;
+      margin: auto;
+    }
+    button {
+      padding: 12px 18px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    pre {
+      background: #f4f4f4;
+      padding: 12px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .info {
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Locatie delen</h1>
+
+  <p class="info">
+    Klik op <b>“Locatie delen”</b>.  
+    Je browser zal om toestemming vragen.  
+    Alleen als je <b>toestaat</b>, wordt je locatie getoond.
+  </p>
+
+  <button id="btn">Locatie delen</button>
+
+  <h2>Resultaat</h2>
+  <div id="result">Nog geen locatie gedeeld.</div>
+
+  <script>
+    const btn = document.getElementById("btn");
+    const result = document.getElementById("result");
+
+    btn.addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        result.innerHTML = "<pre>Geolocatie wordt niet ondersteund.</pre>";
+        return;
+      }
+
+      result.innerHTML = "<pre>Toestemming aanvragen...</pre>";
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          const acc = position.coords.accuracy;
+          const map = `https://www.google.com/maps?q=${lat},${lon}`;
+
+          result.innerHTML =
+            `<pre>
+✅ Locatie ontvangen
+
+Latitude:  ${lat}
+Longitude: ${lon}
+Nauwkeurigheid (± meter): ${acc}
+
+Google Maps:
+${map}
+</pre>`;
+        },
+        (error) => {
+          result.innerHTML =
+            `<pre>
+❌ Geen locatie ontvangen
+
+Reden: ${error.message}
+
+Tip:
+– Klik op "Toestaan"
+– Zorg dat de site via HTTPS opent
+</pre>`;
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 0
+        }
+      );
+    });
+  </script>
+
+</body>
+</html>
